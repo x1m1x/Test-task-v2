@@ -1,0 +1,4 @@
+django
+djangorestframework
+pexels_api
+djangorestframework_simplejwt
