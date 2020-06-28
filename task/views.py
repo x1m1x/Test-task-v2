@@ -73,7 +73,7 @@ class ImageCreate(generics.CreateAPIView):
         serializer = ImageCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         try:
-            serializer.save(description=description, id=id, image_url=image_url)
+            serializer.save(description=description, id=id, image_url=image_url, uploaded_by=request.user)
         except:
             return Response({'detail': 'Such image is already exist'}, status=status.HTTP_403_FORBIDDEN)
 
