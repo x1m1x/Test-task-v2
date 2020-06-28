@@ -11,8 +11,8 @@ In this test task, I discovered a lot of new technologies for me. This is my fir
 # Documentation
 * / - main page
 * image/create/ - create image
-* image/<id>/add_to_bookmark/ - add image to the bookmark
-* profile/<id>/ - view and edit user profile
+* image/<image_id>/add_to_bookmark/ - add image to the bookmark
+* profile/<profile_id>/ - view and edit user profile
 * bookmark/ - bookmark  
 * register/ - registration
 * api/token/ - get access and refresh token
