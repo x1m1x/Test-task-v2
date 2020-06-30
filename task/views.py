@@ -12,9 +12,6 @@ from .models import Image
 from .serializers import *
 from .permissions import IsNotAuthenticatedOrReadOnly
 
-# - 1. Регистрация
-# - 2. При запросе на профиль должны возвращаться фотки которые пользователь загрузил
-# - 3. Запрос на добавление фото в закладки
 
 def get_images(query=None):
     api_key = '563492ad6f917000010000010ff082d5518a4fbd9b0710fafd7c9769'
@@ -126,33 +123,39 @@ class Bookmark(generics.ListAPIView):
 # Users
 
 
-class UserProfile(generics.RetrieveUpdateDestroyAPIView):
+class UserProfile(APIView):
     permission_classes = [IsAuthenticated]
-    serializer_class = UserSerializer
-    queryset = User.objects.all()
-    lookup_field = "id"
 
-    def get(self, request, id):
-        try:
-            User.objects.get(id=id)
-        except:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        if request.user.id == id:
-            user = User.objects.get(id=id)
-            uploaded_images = []
-            for image in Image.objects.filter(uploaded_by=request.user):
-                uploaded_images.append(image.id)
+    def get(self, request):
+        user = User.objects.get(id=request.user.id)
+        uploaded_images = []
+        for image in Image.objects.filter(uploaded_by=request.user):
+            uploaded_images.append(image.id)
 
-            properties = {
-                'username': user.username,
-                'email': user.email,
-                'is_staff': user.is_staff,
-                'id': user.id,
-                'uploaded_photos': uploaded_images
-            }
-            return Response(properties)
-        else:
-            return Response(status=status.HTTP_403_FORBIDDEN)
+        properties = {
+            'username': user.username,
+            'email': user.email,
+            'is_staff': user.is_staff,
+            'id': user.id,
+            'uploaded_photos': uploaded_images
+        }
+        return Response(properties)
+
+    def put(self, request):
+        username = request.POST['username']
+        email = request.POST['email']
+        user = User.objects.get(id=request.user.id)
+
+        serializer = UserSerializer(user, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(request.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request):
+        user = User.objects.get(id=request.user.id)
+        user.delete()
+        return Response({"detail": "Successfully deleted!"})
 
 
 class UserCreate(generics.CreateAPIView):

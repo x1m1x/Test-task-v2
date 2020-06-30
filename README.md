@@ -12,7 +12,7 @@ In this test task, I discovered a lot of new technologies for me. This is my fir
 * / - main page
 * image/create/ - create image
 * image/<image_id>/add_to_bookmark/ - add image to the bookmark
-* profile/<profile_id>/ - view and edit user profile
+* profile/ - view and edit user profile
 * bookmark/ - bookmark  
 * register/ - registration
 * api/token/ - get access and refresh token

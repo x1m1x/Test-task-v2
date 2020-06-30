@@ -1,5 +1,7 @@
 from django.urls import path
 
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+
 from .views import *
 
 
@@ -10,5 +12,8 @@ urlpatterns = [
     path('bookmark/', Bookmark.as_view(), name="bookmark_url"),
     # users
     path('register/', UserCreate.as_view(), name="user_create_url"),
-    path('profile/<int:id>/', UserProfile.as_view(), name="user_profile_url"),
+    path('profile/', UserProfile.as_view(), name="user_profile_url"),
+    # token
+    path('token/', TokenObtainPairView.as_view()),
+    path('token/refresh/', TokenRefreshView.as_view()),
 ]
