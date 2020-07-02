@@ -16,9 +16,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from django.conf.urls import handler404, handler500
+
+from task.views import error404, error500
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('task.urls')),
-    # path('auth/', include('rest_framework.urls'))
+    path('api', include('task.urls')),
 ]
+
+handler404 = error404
+handler500 = error500

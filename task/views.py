@@ -6,12 +6,29 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from pexels_api import API
 
+from django.db import IntegrityError
+from django.shortcuts import render
+
+from django.http import HttpResponseNotFound
+
 from django.contrib.auth.models import User
 
 from .models import Image
 from .serializers import *
 from .permissions import IsNotAuthenticatedOrReadOnly
 
+import json
+
+
+def error500(request):
+    response_data = {}
+    response_data['detail'] = 'Server error'
+    return HttpResponseNotFound(json.dumps(response_data), content_type="application/json", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+def error404(request, exception):
+    response_data = {}
+    response_data['detail'] = 'Not found.'
+    return HttpResponseNotFound(json.dumps(response_data), content_type="application/json")
 
 def get_images(query=None):
     api_key = '563492ad6f917000010000010ff082d5518a4fbd9b0710fafd7c9769'
@@ -48,6 +65,7 @@ class ImageList(APIView):
     permission_classes = [IsAuthenticated]
     serializer_class = ImageSerializer
 
+
     def get(self, request):
         if request.GET.get('search'):
             return Response(get_images(request.GET.get('search')))
@@ -63,18 +81,14 @@ class ImageCreate(generics.CreateAPIView):
             else:
                 continue
     def post(self, request):
-        description = request.POST['description']
-        id = request.POST['id']
-        image_url = request.POST['image_url']
-
         serializer = ImageCreateSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        try:
-            serializer.save(description=description, id=id, image_url=image_url, uploaded_by=request.user)
-        except:
-            return Response({'detail': 'Such image is already exist'}, status=status.HTTP_403_FORBIDDEN)
-
+        if serializer.is_valid():
+            try:
+                serializer.save(uploaded_by=request.user)
+            except IntegrityError:
+                return Response({"id": ["Such image is already exist"]}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
 
 class ImageAddToBookmark(APIView):
@@ -91,28 +105,15 @@ class ImageAddToBookmark(APIView):
         image_json = self.get_image(id)
         if image_json == None:
             return Response(status=status.HTTP_404_NOT_FOUND)
-
-
-
-        return Response(image_json)
-
-    def post(self, request, id):
-        image_json = self.get_image(id)
-        if image_json == None:
-            return Response(status=status.HTTP_404_NOT_FOUND)
         try:
             image = Image.objects.get(id=id)
-        except:
+        except Image.DoesNotExist:
             image = Image.objects.create(description=image_json['description'],
                                          id=image_json['id'],
                                          image_url=image_json['image_url'],
-                                         show=False)
-
-        if request.POST.get('add_to_bookmark') == "true":
-            image.liked_by = request.user
+                                         show=False,
+                                         liked_by=request.user)
             image.save()
-            return Response(image_json, status=status.HTTP_201_CREATED)
-
         return Response(image_json, status=status.HTTP_201_CREATED)
 
 class Bookmark(generics.ListAPIView):
@@ -121,8 +122,6 @@ class Bookmark(generics.ListAPIView):
         return Image.objects.filter(liked_by=self.request.user)
 
 # Users
-
-
 class UserProfile(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -132,18 +131,16 @@ class UserProfile(APIView):
         for image in Image.objects.filter(uploaded_by=request.user):
             uploaded_images.append(image.id)
 
-        properties = {
+        json = {
             'username': user.username,
             'email': user.email,
             'is_staff': user.is_staff,
             'id': user.id,
             'uploaded_photos': uploaded_images
         }
-        return Response(properties)
+        return Response(json)
 
     def put(self, request):
-        username = request.POST['username']
-        email = request.POST['email']
         user = User.objects.get(id=request.user.id)
 
         serializer = UserSerializer(user, data=request.data)
