@@ -16,9 +16,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
-from django.conf.urls import handler404, handler500
+from django.conf.urls import handler404, handler500, handler400, handler403
 
-from task.views import error404, error500
+from task.views import error404, error500, error400, error403
 
 
 urlpatterns = [
@@ -29,3 +29,5 @@ urlpatterns = [
 
 handler404 = error404
 handler500 = error500
+handler400 = error400
+handler403 = error403

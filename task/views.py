@@ -9,7 +9,7 @@ from pexels_api import API
 from django.db import IntegrityError
 from django.shortcuts import render
 
-from django.http import HttpResponseNotFound
+from django.http import HttpResponseNotFound, HttpResponse
 
 from django.contrib.auth.models import User
 
@@ -23,11 +23,21 @@ import json
 def error500(request):
     response_data = {}
     response_data['detail'] = 'Server error'
-    return HttpResponseNotFound(json.dumps(response_data), content_type="application/json", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    return HttpResponse(json.dumps(response_data), content_type="application/json", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+def error400(request, exception):
+    response_data = {}
+    response_data['detail'] = 'Bad request'
+    return HttpResponse(json.dumps(response_data), content_type="application/json", status=status.HTTP_400_BAD_REQUEST)
+
+def error403(request, exception):
+    response_data = {}
+    response_data['detail'] = 'Forbidden'
+    return HttpResponse(json.dumps(response_data), content_type="application/json", status=status.HTTP_403_FORBIDDEN)
 
 def error404(request, exception):
     response_data = {}
-    response_data['detail'] = 'Not found.'
+    response_data['detail'] = 'Not found'
     return HttpResponseNotFound(json.dumps(response_data), content_type="application/json")
 
 def get_images(query=None):
