@@ -18,7 +18,7 @@ from django.urls import path, include
 
 from django.conf.urls import handler404, handler500, handler400, handler403
 
-from task.views import error404, error500, error400, error403
+from task.custom_errors import error404, error500, error400, error403
 
 
 urlpatterns = [

@@ -3,3 +3,4 @@ djangorestframework
 pexels_api
 djangorestframework_simplejwt
 psycopg2
+pyjwt
