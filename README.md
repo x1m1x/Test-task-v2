@@ -9,4 +9,4 @@ In this test task, I discovered a lot of new technologies for me. This is my fir
 * Writing unit-tests
 
 # Documentation
-https://www.getpostman.com/collections/7b5076fd8f571b345eb8
+https://codeunion.postman.co/collections/11855723-9160f3ca-a262-4eca-9594-dff143d67464?version=latest&workspace=b4a5994e-8cc2-4bb2-842b-69532afe051c
