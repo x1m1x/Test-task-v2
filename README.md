@@ -9,12 +9,4 @@ In this test task, I discovered a lot of new technologies for me. This is my fir
 * Writing unit-tests
 
 # Documentation
-* / - main page
-* image/create/ - create image
-* image/<image_id>/add_to_bookmark/ - add image to the bookmark
-* profile/ - view and edit user profile
-* bookmark/ - bookmark  
-* register/ - registration
-* api/token/ - get access and refresh token
-* api/token/refresh/ - refresh your access token
-* admin/ - admin page
+https://www.getpostman.com/collections/7b5076fd8f571b345eb8
