@@ -180,6 +180,9 @@ class ImageAddToBookmark(APIView):
                                          show=False,
                                          bookmark=Bookmark.objects.get(user=request.user.id))
             image.save()
+        except Bookmark.DoesNotExist:
+            Bookmark.objects.create(user=request.user).save()
+            
         return Response(image_json, status=status.HTTP_201_CREATED)
 
 class BookmarkDetail(APIView):
